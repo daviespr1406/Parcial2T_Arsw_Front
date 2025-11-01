@@ -14,7 +14,7 @@ Esta es una aplicacion web programada en javascript con React la cual permite ha
 
 ![](assets/1.png)
 
-Con esta sebusca implementar un modo multijugador el cual permita a traves de un mecanismo de websockets una conexion concurrente
+Con esta se busca implementar un modo multijugador el cual permita a traves de un mecanismo de websockets una conexion concurrente
 
 Se va a utilizar el servidor concurrente que se encuentra en: https://github.com/daviespr1406/Parcial2T_ARSW.git
 
@@ -29,3 +29,8 @@ npm install
 npm start
 ```
 
+## configuracion de concurrencia
+
+![](assets/2.png)
+
+![](assets/3.png)

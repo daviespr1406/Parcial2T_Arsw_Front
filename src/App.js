@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import React from 'react';
 
+
 const Square = ({value, onSquareClick}) => {
   return (
     <button className="square" onClick={onSquareClick}>
@@ -9,7 +10,8 @@ const Square = ({value, onSquareClick}) => {
   );
 }
 
-const Board = ({ xIsNext, squares, onPlay }) => {
+function Board ({ xIsNext, squares, onPlay }){
+  
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -29,8 +31,19 @@ const Board = ({ xIsNext, squares, onPlay }) => {
     status = 'Winner: ' + winner;
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
-  }
-  
+  } React.useEffect(() => {
+    const comunicationWS = React.useRef(null);
+    comunicationWS.current = new WSChannel(WsServiceURL(),
+        (msg) => {
+            var obj = JSON.parse(msg);
+            console.log("On func call back ", msg);
+            Square(obj.status,handleClick(i));
+        });
+    return () => {
+        console.log('Clossing connection ...')
+        comunicationWS.current.close();
+    };
+}, []);
 
   return (
     <>
@@ -52,6 +65,7 @@ const Board = ({ xIsNext, squares, onPlay }) => {
       </div>
     </>
   );
+  
 }
 
 export default function Game() {
@@ -89,8 +103,12 @@ export default function Game() {
 
   return (
     <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      <div className="game-board" id = "root">
+        <Function>
+          root.render(){
+            Board(xIsNext,currentMove, handlePlay)
+          }
+        </Function>
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
