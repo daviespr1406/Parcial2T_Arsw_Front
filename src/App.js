@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import React from 'react';
 
-function Square({value, onSquareClick}) {
+const Square = ({value, onSquareClick}) => {
   return (
     <button className="square" onClick={onSquareClick}>
       {value}
@@ -8,7 +9,7 @@ function Square({value, onSquareClick}) {
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+const Board = ({ xIsNext, squares, onPlay }) => {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -21,7 +22,7 @@ function Board({ xIsNext, squares, onPlay }) {
     }
     onPlay(nextSquares);
   }
-
+  
   const winner = calculateWinner(squares);
   let status;
   if (winner) {
@@ -29,6 +30,7 @@ function Board({ xIsNext, squares, onPlay }) {
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
+  
 
   return (
     <>
@@ -70,7 +72,7 @@ export default function Game() {
     setXIsNext(nextMove % 2 === 0);
   }
 
-  const moves = history.map((squares, move) => {
+  const moves = history.map((_squares, move) => {
     let description;
     if (move > 0) {
       description = 'Go to move #' + move;
@@ -83,6 +85,7 @@ export default function Game() {
       </li>
     );
   });
+  
 
   return (
     <div className="game">
@@ -95,6 +98,43 @@ export default function Game() {
     </div>
   );
 }
+
+class WSChannel {
+  constructor(URL, callback) {
+      this.URL = URL;
+      this.wsocket = new WebSocket(URL);
+      this.wsocket.onopen = (evt) => this.onOpen(evt);
+      this.wsocket.onmessage = (evt) => this.onMessage(evt);
+      this.wsocket.onerror = (evt) => this.onError(evt);
+      this.receivef = callback;
+  }
+  onOpen(evt) {
+      console.log("In onOpen", evt);
+  }
+  onMessage(evt) {
+      console.log("In onMessage", evt);
+  }
+  onError(evt) {
+      console.error("In onError", evt);
+  }
+  send(X, O) {
+      let msg = '{ "X": ' + (X) + ', "O": ' + (O) + "}";
+      console.log("sending: ", msg);
+      this.wsocket.send(msg);
+  }
+}
+
+function WsServiceURL() {
+  var host = window.location.host;
+  console.log("Host: " + host);
+  var url = 'wss://' + (host) + '/wsService';
+  if(host.toString().startsWith("localhost")){
+      url = 'ws://' + (host) + '/wsService';
+  }
+  console.log("URL Calculada: " + url);
+  return url;
+}
+
 
 function calculateWinner(squares) {
   const lines = [
